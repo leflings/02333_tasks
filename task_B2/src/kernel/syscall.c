@@ -50,7 +50,7 @@ int system_call_implementation(void) {
 			kprints("Error starting image\n");
 		}
 
-		process_table[process_number].parent = 0;
+		process_table[process_number].parent = thread_table[current_thread].data.owner;
 
 		thread_number = allocate_thread();
 
@@ -58,12 +58,11 @@ int system_call_implementation(void) {
 		thread_table[thread_number].data.registers.integer_registers.rflags = 0;
 		thread_table[thread_number].data.registers.integer_registers.rip = prepare_process_ret_val.first_instruction_address;
 
-		process_table[process_number].threads = 1;
+		process_table[process_number].threads += 1;
 
 		SYSCALL_ARGUMENTS.rax = ALL_OK;
 
 		current_thread = thread_number;
-
 
 		break;
 	}
@@ -72,7 +71,6 @@ int system_call_implementation(void) {
 		int i;
 		int owner_process = thread_table[current_thread].data.owner;
 		int parent_process = process_table[owner_process].parent;
-		kprints("Called \n");
 
 		thread_table[current_thread].data.owner = -1; /* Terminate Thread */
 
