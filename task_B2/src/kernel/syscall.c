@@ -43,7 +43,7 @@ int system_call_implementation(void) {
 		}
 		prepare_process_ret_val = prepare_process(
 				executable_table[executable_number].elf_image,
-				0,
+				process_number,
 				executable_table[executable_number].memory_footprint_size);
 
 		if(0 == prepare_process_ret_val.first_instruction_address) {
