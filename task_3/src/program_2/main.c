@@ -17,11 +17,12 @@ main(int argc, char* argv[])
 #if 0
   volatile long curr_time=0;
 
-  while(curr_time++ < 1000000);
+  while(curr_time++ < 5000000);
 #else
-  pause(100);
+  pause(1000);
 #endif
 
+  printhex(time());
   prints("Pang\n");
  }
 }

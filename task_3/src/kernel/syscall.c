@@ -59,7 +59,7 @@ system_call_implementation(void)
 			kprints("Error starting image\n");
 		}
 
-		process_table[process_number].parent = thread_table[current_thread].data.owner;
+		process_table[process_number].parent = thread_table[cpu_private_data.thread_index].data.owner;
 
 		thread_number = allocate_thread();
 
@@ -71,17 +71,16 @@ system_call_implementation(void)
 
 		SYSCALL_ARGUMENTS.rax = ALL_OK;
 
-		current_thread = thread_number;
-
+		thread_queue_enqueue(&ready_queue, thread_number);
 		break;
 	}
 	case SYSCALL_TERMINATE:
 	{
 		int i;
-		int owner_process = thread_table[current_thread].data.owner;
+		int owner_process = thread_table[cpu_private_data.thread_index].data.owner;
 		int parent_process = process_table[owner_process].parent;
 
-		thread_table[current_thread].data.owner = -1; /* Terminate Thread */
+		thread_table[cpu_private_data.thread_index].data.owner = -1; /* Terminate Thread */
 
 		process_table[owner_process].threads -= 1; /* Decrement Thread count */
 
@@ -91,7 +90,11 @@ system_call_implementation(void)
 
 		for(i=0; i < MAX_NUMBER_OF_THREADS && thread_table[i].data.owner != parent_process; i++) {
 		}
-		current_thread = i;
+
+		/*thread_queue_dequeue(&ready_queue);*/
+
+		/*cpu_private_data.thread_index = i;*/
+		schedule = 1;
 
 		break;
 

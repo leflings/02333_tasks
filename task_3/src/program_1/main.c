@@ -15,8 +15,9 @@ main(int argc, char* argv[])
  {
   long curr_time=time();
 
-  while((time()-curr_time) < 100);
+  while((time()-curr_time) < 200);
 
+  printhex(time());
   prints("Pong\n");
  }
 }

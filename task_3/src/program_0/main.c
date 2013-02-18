@@ -25,7 +25,8 @@ main(int argc, char* argv[])
 
  while(1)
  {
-  pause(100);
+  pause(500);
+  printhex(time());
   prints("Ping\n");
  }
 }
