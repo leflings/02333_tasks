@@ -26,9 +26,9 @@ main(int argc, char* argv[])
 
  while(1)
  {
-  pause(100);
+  pause(200);
   printhex(time()-last);
-  prints("Ping --\n");
+  prints("  Ping --\n");
   last = time();
  }
 }

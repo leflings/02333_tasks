@@ -18,13 +18,13 @@ main(int argc, char* argv[])
 #if 1
   volatile long curr_time=0;
 
-  while(curr_time++ < 1000000);
+  while(curr_time++ < 5000000);
 #else
   pause(1000);
 #endif
 
   printhex(time()-last);
-  prints("Pang ##\n");
+  prints("  Pang ##\n");
   last = time();
  }
 }

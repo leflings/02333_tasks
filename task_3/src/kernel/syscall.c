@@ -91,9 +91,10 @@ system_call_implementation(void)
 		for(i=0; i < MAX_NUMBER_OF_THREADS && thread_table[i].data.owner != parent_process; i++) {
 		}
 
-		/*thread_queue_dequeue(&ready_queue);*/
-
-		/*cpu_private_data.thread_index = i;*/
+		/* At this point the thread should'nt be in the ready queue
+		 * so we can just force a reschedule which will cause it to
+		 * stop running and never "come back"
+		 */
 		schedule = 1;
 
 		break;
