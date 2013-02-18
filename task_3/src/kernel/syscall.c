@@ -64,7 +64,7 @@ system_call_implementation(void)
 		thread_number = allocate_thread();
 
 		thread_table[thread_number].data.owner = process_number;
-		thread_table[thread_number].data.registers.integer_registers.rflags = 0;
+		thread_table[thread_number].data.registers.integer_registers.rflags = 0x200;
 		thread_table[thread_number].data.registers.integer_registers.rip = prepare_process_ret_val.first_instruction_address;
 
 		process_table[process_number].threads += 1;
