@@ -1,0 +1,7 @@
+Add a priority field to the thread data structure
+
+When calling createprocess i will let it have say 64 priority levels
+So i will let the lowest 6 bits represent the priority, and everything above that represent executable number
+
+so createprocess system call will have to do some masking/unmasking but other than that i can use the new data structure to handle it
+

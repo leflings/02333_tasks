@@ -7,6 +7,8 @@
 #define _KERNEL_H_
 
 #include <sysdefines.h>
+#include "threadqueue.h"
+
 
 /* Type definitions */
 
@@ -24,6 +26,7 @@
 /*!< Size of the process_table. */
 #define MAX_NUMBER_OF_THREADS   (256)
 /*!< Size of the thread_table. */
+#define HIGHEST_PRIORITY 		(16)
 
 /* Type declarations */
 
@@ -83,6 +86,7 @@ union thread
                                      resides in. In the timer queue this
                                      variable is either an absolute time or a
                                      delta time.*/
+  int			 priority;		/*!< Describes a threads priority */
  }               data;
  char            padding[1024];
 };
@@ -258,7 +262,7 @@ memory_size;
 /*! \note Linked lists are terminated with a thread with a next index of -1. */
 
 extern struct thread_queue
-ready_queue;
+ready_queue[HIGHEST_PRIORITY];
 /*!< The ready queue. */
 
 extern int

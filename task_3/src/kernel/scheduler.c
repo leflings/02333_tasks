@@ -10,11 +10,16 @@
 void
 scheduler_called_from_system_call_handler(const register int schedule)
 {
-	int thread_running, thread_to_run;
+	int i;
 	if(schedule) {
 		/* in this case we must reschedule */
 		cpu_private_data.ticks_left_of_time_slice = MAX_TICKS;
-		cpu_private_data.thread_index = thread_queue_dequeue(&ready_queue);
+		for(i = HIGHEST_PRIORITY-1; i >= 0 && thread_queue_is_empty(&ready_queue[i]); i--) {
+		}
+		/*kprints("Starting thread from queue: ");
+		kprinthex(i);
+		kprints("\n");*/
+		cpu_private_data.thread_index = thread_queue_dequeue(&ready_queue[i]);
 		return;
 	}
 	/*
@@ -35,6 +40,7 @@ scheduler_called_from_system_call_handler(const register int schedule)
 void
 scheduler_called_from_timer_interrupt_handler(const register int thread_changed)
 {
+	int i;
 	if(thread_changed)
 	{
 		/* We must reset the time_slice */
@@ -47,8 +53,13 @@ scheduler_called_from_timer_interrupt_handler(const register int thread_changed)
 		if(--cpu_private_data.ticks_left_of_time_slice < 1)
 		{
 			/* it's expired, stop execution, put in back of quere and fetch next */
-			thread_queue_enqueue(&ready_queue, cpu_private_data.thread_index);
-			cpu_private_data.thread_index = thread_queue_dequeue(&ready_queue);
+			thread_queue_enqueue(&ready_queue[thread_table[cpu_private_data.thread_index].data.priority], cpu_private_data.thread_index);
+			for(i = HIGHEST_PRIORITY-1; i >= 0 && thread_queue_is_empty(&ready_queue[i]); i--) {
+			}
+		/*kprints("Starting thread from queue: ");
+		kprinthex(i);
+		kprints("\n");*/
+			cpu_private_data.thread_index = thread_queue_dequeue(&ready_queue[i]);
 			cpu_private_data.ticks_left_of_time_slice = MAX_TICKS;
 			return;
 		}

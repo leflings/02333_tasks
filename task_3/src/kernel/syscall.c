@@ -45,7 +45,9 @@ system_call_implementation(void)
 
 	case SYSCALL_CREATEPROCESS: {
 		int process_number, thread_number;
-		long int executable_number = SYSCALL_ARGUMENTS.rdi;
+		long int param = SYSCALL_ARGUMENTS.rdi;
+		int priority = param % 64;
+		long int executable_number = param >> 6;
 		struct prepare_process_return_value prepare_process_ret_val;
 
 		for (process_number = 0; process_number < MAX_NUMBER_OF_PROCESSES && process_table[process_number].threads > 0; process_number++) {
@@ -59,11 +61,18 @@ system_call_implementation(void)
 			kprints("Error starting image\n");
 		}
 
+		kprints("Started process: ");
+		kprinthex(process_number);
+		kprints("  with priority: ");
+		kprinthex(priority);
+		kprints("\n");
+
 		process_table[process_number].parent = thread_table[cpu_private_data.thread_index].data.owner;
 
 		thread_number = allocate_thread();
 
 		thread_table[thread_number].data.owner = process_number;
+		thread_table[thread_number].data.priority = priority;
 		thread_table[thread_number].data.registers.integer_registers.rflags = 0x200;
 		thread_table[thread_number].data.registers.integer_registers.rip = prepare_process_ret_val.first_instruction_address;
 
@@ -71,7 +80,7 @@ system_call_implementation(void)
 
 		SYSCALL_ARGUMENTS.rax = ALL_OK;
 
-		thread_queue_enqueue(&ready_queue, thread_number);
+		thread_queue_enqueue(&ready_queue[priority], thread_number);
 		break;
 	}
 	case SYSCALL_TERMINATE:
